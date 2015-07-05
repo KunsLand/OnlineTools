@@ -3,38 +3,40 @@
 <head>
 	<title>Online Tools</title>
 	<style>
+		body {
+			width: 1080px;
+		}
 		th {text-align: right;}
 	</style>
 </head>
 <body>
-	<div id="remote">
-	    <h2>
-	        Paste File URL
-	    </h2>
-	    <input id="remoteFile"/>
-	</div>
 	<div id="local">
 	    <h2>
-	        Local File
+	        File Hash Online
 	    </h2>
 	    <input type="file" id="localFile" name="localFile"/>
 	 </div>
 	<div>
-	    <h2>Checksum</h2>
+	    <h2>Result</h2>
 	    <table id="result">
 	    </table>
 	</div>
-	<script src="md5.js"></script>
-	<script src="sha1.js"></script>
+	<script src="core-min.js"></script>
+	<script src="lib-typedarrays-min.js"></script>
+	<script src="md5-min.js"></script>
+	<script src="sha1-min.js"></script>
 	<script src="sha224.js"></script>
-	<script src="sha256.js"></script>
+	<script src="sha256-min.js"></script>
 	<script src="sha384.js"></script>
 	<script src="sha512.js"></script>
 	<script src="sha3.js"></script>
 	<script type="text/javascript">
 		function readFileInfo(evt){
+			var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice;
 		    var file = evt.target.files[0];
-		    var reader = new FileReader();
+		    var chunkSize = 2097152, // read in chunks of 2MB
+		    	chunks = Math.ceil(file.size / chunkSize),
+		    	currentChunk = 0;
 		    var md5 = CryptoJS.algo.MD5.create();
 		    var sha1 = CryptoJS.algo.SHA1.create();
 		    var sha224 = CryptoJS.algo.SHA224.create();
@@ -42,9 +44,8 @@
 		    var sha384 = CryptoJS.algo.SHA384.create();
 		    var sha512 = CryptoJS.algo.SHA512.create();
 		    var sha3 = CryptoJS.algo.SHA3.create();
-		    document.getElementById('result').innerHTML="Reading ...";
-		    reader.onload=function(e){
-		    	var str = CryptoJS.enc.Latin1.parse(e.target.result);
+		    frOnload=function(e){
+		    	var str = CryptoJS.lib.WordArray.create(e.target.result);
 		    	md5.update(str);
 		    	sha1.update(str);
 		    	sha224.update(str);
@@ -52,19 +53,32 @@
 		    	sha384.update(str);
 		    	sha512.update(str);
 		    	sha3.update(str);
-			    var result="<tr><th>Name:</th><td>"+file.name+"</td></tr>";
-		        result+="<tr><th>Size:</th><td>"+file.size+"B</td></tr>";
-		        result+="<tr><th>Type:</th><td>"+(file.type||'N/A')+"</td></tr>";
-		        result+="<tr><th>MD5:</th><td>"+md5.finalize()+"<td></tr>";
-		        result+="<tr><th>SHA-1:</th><td>"+sha1.finalize()+"<td></tr>";
-		        result+="<tr><th>SHA-224:</th><td>"+sha224.finalize()+"<td></tr>";
-		        result+="<tr><th>SHA-256:</th><td>"+sha256.finalize()+"<td></tr>";
-		        result+="<tr><th>SHA-384:</th><td>"+sha384.finalize()+"<td></tr>";
-		        result+="<tr><th>SHA-512:</th><td>"+sha512.finalize()+"<td></tr>";
-		        result+="<tr><th>SHA-3:</th><td>"+sha3.finalize()+"<td></tr>";
-		        document.getElementById('result').innerHTML=result;
+		        currentChunk++;
+		        if (currentChunk < chunks) loadNext();
+		        else {
+				    var result="<tr><th>Name:</th><td>"+file.name+"</td></tr>";
+			        result+="<tr><th>Size:</th><td>"+file.size+"B</td></tr>";
+			        result+="<tr><th>Type:</th><td>"+(file.type||'N/A')+"</td></tr>";
+			        result+="<tr><th>MD5:</th><td>"+md5.finalize()+"<td></tr>";
+			        result+="<tr><th>SHA-1:</th><td>"+sha1.finalize()+"<td></tr>";
+			        result+="<tr><th>SHA-224:</th><td>"+sha224.finalize()+"<td></tr>";
+			        result+="<tr><th>SHA-256:</th><td>"+sha256.finalize()+"<td></tr>";
+			        result+="<tr><th>SHA-384:</th><td>"+sha384.finalize()+"<td></tr>";
+			        result+="<tr><th>SHA-512:</th><td>"+sha512.finalize()+"<td></tr>";
+			        result+="<tr><th>SHA-3:</th><td>"+sha3.finalize()+"<td></tr>";
+			        document.getElementById('result').innerHTML=result;
+		    	}
 		    }
-		    reader.readAsBinaryString(file);
+
+			function loadNext() {
+				var fileReader = new FileReader();
+				fileReader.onload = frOnload;
+				var start = currentChunk * chunkSize,
+					end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
+		        document.getElementById('result').innerHTML="Reading chunks: "+(currentChunk+1)+"/"+chunks;
+				fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
+			};
+			loadNext();
 		}
 		document.getElementById('localFile').addEventListener('change',readFileInfo);
 	</script>
