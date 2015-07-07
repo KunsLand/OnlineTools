@@ -33,7 +33,6 @@
 		    	document.getElementById('result').innerHTML=e.data + '/' + chunks;
 		    });
 		    frOnload=function(e){
-		    	var str = CryptoJS.lib.WordArray.create(e.target.result);
 		        currentChunk++;
 		        worker.postMessage(currentChunk);
 		        if (currentChunk < chunks) loadNext();
