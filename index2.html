@@ -1,0 +1,57 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>Online Tools</title>
+	<style>
+		body {
+			width: 1080px;
+		}
+		th {text-align: right;}
+	</style>
+</head>
+<body>
+	<div id="local">
+	    <h2>
+	        File Hash Online
+	    </h2>
+	    <input type="file" id="localFile" name="localFile"/>
+	 </div>
+	<div>
+	    <h2>Result</h2>
+	    <table id="result">
+	    </table>
+	</div>
+	<script type="text/javascript">
+		function readFileInfo(evt){
+			var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice;
+		    var file = evt.target.files[0];
+		    var chunkSize = 2097152, // read in chunks of 2MB
+		    	chunks = Math.ceil(file.size / chunkSize),
+		    	currentChunk = 0;
+		    var worker = new Worker('worker.js');
+		    worker.addEventListener('message',function(e){
+		    	document.getElementById('result').innerHTML=e.data + '/' + chunks;
+		    });
+		    frOnload=function(e){
+		    	var str = CryptoJS.lib.WordArray.create(e.target.result);
+		        currentChunk++;
+		        worker.postMessage(currentChunk);
+		        if (currentChunk < chunks) loadNext();
+		        else {
+			        document.getElementById('result').innerHTML='DONE';
+		    	}
+		    }
+
+			function loadNext() {
+				var fileReader = new FileReader();
+				fileReader.onload = frOnload;
+				var start = currentChunk * chunkSize,
+					end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
+				fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
+			};
+			loadNext();
+		}
+		document.getElementById('localFile').addEventListener('change',readFileInfo);
+	</script>
+</body>
+</html>
