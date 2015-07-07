@@ -39,20 +39,29 @@
 		    	currentChunk = 0;
 		    var md5 = CryptoJS.algo.MD5.create();
 		    var sha1 = CryptoJS.algo.SHA1.create();
-		    var sha224 = CryptoJS.algo.SHA224.create();
-		    var sha256 = CryptoJS.algo.SHA256.create();
-		    var sha384 = CryptoJS.algo.SHA384.create();
-		    var sha512 = CryptoJS.algo.SHA512.create();
-		    var sha3 = CryptoJS.algo.SHA3.create();
+		    var sha2_224 = CryptoJS.algo.SHA224.create();
+		    var sha2_256 = CryptoJS.algo.SHA256.create();
+		    var sha2_384 = CryptoJS.algo.SHA384.create();
+		    var sha2_512 = CryptoJS.algo.SHA512.create();
+		    var sha3_224 = CryptoJS.algo.SHA3.create();
+		    var sha3_256 = CryptoJS.algo.SHA3.create();
+		    var sha3_384 = CryptoJS.algo.SHA3.create();
+		    var sha3_512 = CryptoJS.algo.SHA3.create();
+		    sha3_224.init({outputLength: 224});
+		    sha3_256.init({outputLength: 256});
+		    sha3_384.init({outputLength: 384});
 		    frOnload=function(e){
 		    	var str = CryptoJS.lib.WordArray.create(e.target.result);
 		    	md5.update(str);
 		    	sha1.update(str);
-		    	sha224.update(str);
-		    	sha256.update(str);
-		    	sha384.update(str);
-		    	sha512.update(str);
-		    	sha3.update(str);
+		    	sha2_224.update(str);
+		    	sha2_256.update(str);
+		    	sha2_384.update(str);
+		    	sha2_512.update(str);
+		    	sha3_224.update(str);
+		    	sha3_256.update(str);
+		    	sha3_384.update(str);
+		    	sha3_512.update(str);
 		        currentChunk++;
 		        if (currentChunk < chunks) loadNext();
 		        else {
@@ -61,11 +70,14 @@
 			        result+="<tr><th>Type:</th><td>"+(file.type||'N/A')+"</td></tr>";
 			        result+="<tr><th>MD5:</th><td>"+md5.finalize()+"<td></tr>";
 			        result+="<tr><th>SHA-1:</th><td>"+sha1.finalize()+"<td></tr>";
-			        result+="<tr><th>SHA-224:</th><td>"+sha224.finalize()+"<td></tr>";
-			        result+="<tr><th>SHA-256:</th><td>"+sha256.finalize()+"<td></tr>";
-			        result+="<tr><th>SHA-384:</th><td>"+sha384.finalize()+"<td></tr>";
-			        result+="<tr><th>SHA-512:</th><td>"+sha512.finalize()+"<td></tr>";
-			        result+="<tr><th>SHA-3:</th><td>"+sha3.finalize()+"<td></tr>";
+			        result+="<tr><th>SHA2-224:</th><td>"+sha2_224.finalize()+"<td></tr>";
+			        result+="<tr><th>SHA2-256:</th><td>"+sha2_256.finalize()+"<td></tr>";
+			        result+="<tr><th>SHA2-384:</th><td>"+sha2_384.finalize()+"<td></tr>";
+			        result+="<tr><th>SHA2-512:</th><td>"+sha2_512.finalize()+"<td></tr>";
+			        result+="<tr><th>SHA3-224:</th><td>"+sha3_224.finalize()+"<td></tr>";
+			        result+="<tr><th>SHA3-224:</th><td>"+sha3_256.finalize()+"<td></tr>";
+			        result+="<tr><th>SHA3-224:</th><td>"+sha3_384.finalize()+"<td></tr>";
+			        result+="<tr><th>SHA3-512:</th><td>"+sha3_512.finalize()+"<td></tr>";
 			        document.getElementById('result').innerHTML=result;
 		    	}
 		    }
