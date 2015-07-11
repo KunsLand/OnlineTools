@@ -33,6 +33,7 @@
 		    	document.getElementById('result').innerHTML=e.data + '/' + chunks;
 		    });
 		    frOnload=function(e){
+		    	e.target.result;
 		        currentChunk++;
 		        worker.postMessage(currentChunk);
 		        if (currentChunk < chunks) loadNext();
