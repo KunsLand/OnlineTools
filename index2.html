@@ -49,9 +49,10 @@
 					}
 			    };
 		    handle_load_blob=function(e){
+		    	++currentChunk;
 		    	for(i = 0; i < workers.length;i++){
 		    		threads += 1;
-		        	workers[i].postMessage({'blob': e.target.result,'chunk': ++currentChunk,'chunks': chunks});
+		        	workers[i].postMessage({'blob': e.target.result,'chunk': currentChunk,'chunks': chunks});
 		    	}
 		    }
 
