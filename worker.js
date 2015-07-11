@@ -11,10 +11,13 @@ importScripts('sha3.js');
 self.md5 = CryptoJS.algo.MD5.create();
 
 self.addEventListener('message', function(evt){
-	self.md5.update(CryptoJS.lib.WordArray.create(evt.data.blob));
-	evt.data.blob=null;
+	var wordArr = CryptoJS.lib.WordArray.create(evt.data.blob);
+	self.md5.update();
+	out = {'chunk':evt.data.chunk}
 	if(evt.data.chunk==evt.data.chunks){
-		evt.data.result = self.md5.finalize().toString();
+		out.result = self.md5.finalize().toString();
 	}
-	self.postMessage(evt.data);
+	evt = null;
+	wordArr = null;
+	self.postMessage(out);
 }, false);
