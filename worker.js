@@ -9,5 +9,5 @@ importScripts('sha512.js');
 importScripts('sha3.js');
 
 self.addEventListener('message', function(evt){
-	self.postMessage(evt.data.chunk);
+	self.postMessage(evt.data);
 }, false);
