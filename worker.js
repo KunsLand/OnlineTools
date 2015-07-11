@@ -11,5 +11,5 @@ importScripts('sha3.js');
 var
 
 self.addEventListener('message', function(evt){
-	self.postMessage(evt.data);
+	self.postMessage(evt.data.chunk);
 }, false);
