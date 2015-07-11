@@ -36,7 +36,7 @@
 		    hash_file(file, workers);
 		}
 
-		hash_file(file, workers){
+		function hash_file(file, workers){
 			var fileReader, start, end, chunk, chunks, chunkSize, currentChunk, threads, i;
 		    handle_hash_blob=function(e){
 		    		threads -= 1;
@@ -70,7 +70,7 @@
 			fileReader.readAsArrayBuffer(file.slice(start, end));
 		}
 
-		handle_worker_event(id){
+		function handle_worker_event(id){
 			return function(e){
 		    	if(e.data.result){
 		    		document.getElementById(id).innerHTML=e.data.result;
