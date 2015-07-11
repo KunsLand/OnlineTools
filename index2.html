@@ -29,17 +29,19 @@
 		    	chunks = Math.ceil(file.size / chunkSize),
 		    	currentChunk = 0;
 		    var worker = new Worker('worker.js');
+		    console.log(worker);
 		    worker.addEventListener('message',function(e){
-		    	document.getElementById('result').innerHTML=e.data + '/' + chunks;
+		    	if(e.data.result){
+		    		document.getElementById('result').innerHTML=e.data.result;
+		    	}else{
+		    		document.getElementById('result').innerHTML=e.data.chunk +'/' +chunks;
+		    	}
 		    });
 		    frOnload=function(e){
-		    	e.target.result;
+		    	var msg = {'blob': e.target.result,'chunk': currentChunk,'chunks': chunks};
 		        currentChunk++;
-		        worker.postMessage(currentChunk);
+		        worker.postMessage(msg);
 		        if (currentChunk < chunks) loadNext();
-		        else {
-			        document.getElementById('result').innerHTML='DONE';
-		    	}
 		    }
 
 			function loadNext() {
