@@ -38,8 +38,7 @@
 		    	}
 		    });
 		    frOnload=function(e){
-		    	var msg = {'blob': e.target.result,'chunk': currentChunk,'chunks': chunks};
-		        currentChunk++;
+		    	var msg = {'blob': e.target.result,'chunk': ++currentChunk,'chunks': chunks};
 		        worker.postMessage(msg);
 		        if (currentChunk < chunks) loadNext();
 		    }
