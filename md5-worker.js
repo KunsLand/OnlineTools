@@ -10,7 +10,7 @@ self.addEventListener('message', function(evt){
 		var wordArr = CryptoJS.lib.WordArray.create(e.target.result);
 		self.algo.update(wordArr);
 		out = {'chunk':++currentChunk, 'chunks':chunks};
-		if(currentChunk==chunks){
+		if(end===file.size){
 			out.result = self.algo.finalize().toString();
 		}
 		self.postMessage(out);

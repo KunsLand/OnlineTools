@@ -21,77 +21,74 @@
 	    <table id="result">
 	    </table>
 	</div>
-	<script src="core-min.js"></script>
-	<script src="lib-typedarrays-min.js"></script>
-	<script src="md5-min.js"></script>
-	<script src="sha1-min.js"></script>
-	<script src="sha224.js"></script>
-	<script src="sha256-min.js"></script>
-	<script src="sha384.js"></script>
-	<script src="sha512.js"></script>
-	<script src="sha3.js"></script>
 	<script type="text/javascript">
 		function readFileInfo(evt){
-			var blobSlice = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice;
-		    var file = evt.target.files[0];
-		    var chunkSize = 2097152, // read in chunks of 2MB
-		    	chunks = Math.ceil(file.size / chunkSize),
-		    	currentChunk = 0;
-		    var md5 = CryptoJS.algo.MD5.create();
-		    var sha1 = CryptoJS.algo.SHA1.create();
-		    var sha2_224 = CryptoJS.algo.SHA224.create();
-		    var sha2_256 = CryptoJS.algo.SHA256.create();
-		    var sha2_384 = CryptoJS.algo.SHA384.create();
-		    var sha2_512 = CryptoJS.algo.SHA512.create();
-		    var sha3_224 = CryptoJS.algo.SHA3.create();
-		    var sha3_256 = CryptoJS.algo.SHA3.create();
-		    var sha3_384 = CryptoJS.algo.SHA3.create();
-		    var sha3_512 = CryptoJS.algo.SHA3.create();
-		    sha3_224.init({outputLength: 224});
-		    sha3_256.init({outputLength: 256});
-		    sha3_384.init({outputLength: 384});
-		    frOnload=function(e){
-		    	var str = CryptoJS.lib.WordArray.create(e.target.result);
-		    	md5.update(str);
-		    	sha1.update(str);
-		    	sha2_224.update(str);
-		    	sha2_256.update(str);
-		    	sha2_384.update(str);
-		    	sha2_512.update(str);
-		    	sha3_224.update(str);
-		    	sha3_256.update(str);
-		    	sha3_384.update(str);
-		    	sha3_512.update(str);
-		        currentChunk++;
-		        if (currentChunk < chunks) loadNext();
-		        else {
-				    var result="<tr><th>Name:</th><td>"+file.name+"</td></tr>";
-			        result+="<tr><th>Size:</th><td>"+file.size+"B</td></tr>";
-			        result+="<tr><th>Type:</th><td>"+(file.type||'N/A')+"</td></tr>";
-			        result+="<tr><th>MD5:</th><td>"+md5.finalize()+"<td></tr>";
-			        result+="<tr><th>SHA-1:</th><td>"+sha1.finalize()+"<td></tr>";
-			        result+="<tr><th>SHA2-224:</th><td>"+sha2_224.finalize()+"<td></tr>";
-			        result+="<tr><th>SHA2-256:</th><td>"+sha2_256.finalize()+"<td></tr>";
-			        result+="<tr><th>SHA2-384:</th><td>"+sha2_384.finalize()+"<td></tr>";
-			        result+="<tr><th>SHA2-512:</th><td>"+sha2_512.finalize()+"<td></tr>";
-			        result+="<tr><th>SHA3-224:</th><td>"+sha3_224.finalize()+"<td></tr>";
-			        result+="<tr><th>SHA3-256:</th><td>"+sha3_256.finalize()+"<td></tr>";
-			        result+="<tr><th>SHA3-384:</th><td>"+sha3_384.finalize()+"<td></tr>";
-			        result+="<tr><th>SHA3-512:</th><td>"+sha3_512.finalize()+"<td></tr>";
-			        document.getElementById('result').innerHTML=result;
-		    	}
+			var file, workers, worker;
+  			evt.stopPropagation();
+  			evt.preventDefault();
+			File.prototype.slice = File.prototype.webkitSlice || File.prototype.mozSlice || File.prototype.slice;
+		    file = event.dataTransfer ? event.dataTransfer.files[0] : event.target.files[0];
+		    if(!file){
+		    	document.getElementById('result').innerHTML='';
+		    	return;
 		    }
-
-			function loadNext() {
-				var fileReader = new FileReader();
-				fileReader.onload = frOnload;
-				var start = currentChunk * chunkSize,
-					end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
-		        document.getElementById('result').innerHTML="Reading chunks: "+(currentChunk+1)+"/"+chunks;
-				fileReader.readAsArrayBuffer(blobSlice.call(file, start, end));
-			};
-			loadNext();
+		    document.getElementById('result').innerHTML='Reading data ... ';
+		    var result="<tr><th>Name:</th><td>"+file.name+"</td></tr>";
+	        result+="<tr><th>Size:</th><td>"+file.size+"B</td></tr>";
+	        result+="<tr><th>Type:</th><td>"+(file.type||'N/A')+"</td></tr>";
+	        result+="<tr><th>MD5:</th><td id='md5'>Reading data ... <td></tr>";
+	        result+="<tr><th>SHA-1:</th><td id='sha1'>Reading data ... <td></tr>";
+	        result+="<tr><th>SHA2-224:</th><td id='sha2-224'>Reading data ... <td></tr>";
+	        result+="<tr><th>SHA2-256:</th><td id='sha2-256'>Reading data ... <td></tr>";
+	        result+="<tr><th>SHA2-384:</th><td id='sha2-384'>Reading data ... <td></tr>";
+	        result+="<tr><th>SHA2-512:</th><td id='sha2-512'>Reading data ... <td></tr>";
+	        result+="<tr><th>SHA3-224:</th><td id='sha3-224'>Reading data ... <td></tr>";
+	        result+="<tr><th>SHA3-256:</th><td id='sha3-256'>Reading data ... <td></tr>";
+	        result+="<tr><th>SHA3-384:</th><td id='sha3-384'>Reading data ... <td></tr>";
+	        result+="<tr><th>SHA3-512:</th><td id='sha3-512'>Reading data ... <td></tr>";
+	        document.getElementById('result').innerHTML=result;
+  			worker = new Worker('md5-worker.js');
+  			worker.addEventListener('message',handle_worker_event('md5'));
+  			worker.postMessage(file);
+  			worker = new Worker('sha1-worker.js');
+  			worker.addEventListener('message',handle_worker_event('sha1'));
+  			worker.postMessage(file);
+  			worker = new Worker('sha2-224-worker.js');
+  			worker.addEventListener('message',handle_worker_event('sha2-224'));
+  			worker.postMessage(file);
+  			worker = new Worker('sha2-256-worker.js');
+  			worker.addEventListener('message',handle_worker_event('sha2-256'));
+  			worker.postMessage(file);
+  			worker = new Worker('sha2-384-worker.js');
+  			worker.addEventListener('message',handle_worker_event('sha2-384'));
+  			worker.postMessage(file);
+  			worker = new Worker('sha2-512-worker.js');
+  			worker.addEventListener('message',handle_worker_event('sha2-512'));
+  			worker.postMessage(file);
+  			worker = new Worker('sha3-224-worker.js');
+  			worker.addEventListener('message',handle_worker_event('sha3-224'));
+  			worker.postMessage(file);
+  			worker = new Worker('sha3-256-worker.js');
+  			worker.addEventListener('message',handle_worker_event('sha3-256'));
+  			worker.postMessage(file);
+  			worker = new Worker('sha3-384-worker.js');
+  			worker.addEventListener('message',handle_worker_event('sha3-384'));
+  			worker.postMessage(file);
+  			worker = new Worker('sha3-512-worker.js');
+  			worker.addEventListener('message',handle_worker_event('sha3-512'));
+  			worker.postMessage(file);
 		}
+
+		function handle_worker_event(id){
+			return function(e){
+		    	if(e.data.result){
+		    		document.getElementById(id).innerHTML=e.data.result;
+		    	}else{
+		    		document.getElementById(id).innerHTML=e.data.chunk +'/' +e.data.chunks;
+		    	}
+			}
+		}
+
 		document.getElementById('localFile').addEventListener('change',readFileInfo);
 	</script>
 </body>
