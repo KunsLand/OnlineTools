@@ -25,7 +25,7 @@
 		function readFileInfo(evt){
   			evt.stopPropagation();
   			evt.preventDefault();
-			File.prototype.slice = File.prototype.mozSlice || File.prototype.webkitSlice;
+			File.prototype.slice = File.prototype.webkitSlice || File.prototype.mozSlice || File.prototype.slice;
 		    var file = event.dataTransfer ? event.dataTransfer.files[0] : event.target.files[0];
 		    var chunkSize = 1048576, // read in chunks of 1MB
 		    	chunks = Math.ceil(file.size / chunkSize),
