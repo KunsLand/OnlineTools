@@ -29,9 +29,9 @@
 		    	chunks = Math.ceil(file.size / chunkSize),
 		    	currentChunk = 0;
 		    var worker = new Worker('worker.js');
-		    console.log(worker);
 		    worker.addEventListener('message',function(e){
 		    	if(e.data.result){
+		    		console.log(e.data);
 		    		document.getElementById('result').innerHTML=e.data.result;
 		    	}else{
 		    		document.getElementById('result').innerHTML=e.data.chunk +'/' +chunks;
