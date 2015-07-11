@@ -55,7 +55,7 @@
 				var fileReader, start, end;
 				fileReader = new FileReader();
 				fileReader.onload = frOnload;
-				start = currentChunk * chunkSize,];
+				start = currentChunk * chunkSize;
 				end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
 				fileReader.readAsArrayBuffer(file.slice(start, end));
 			};
