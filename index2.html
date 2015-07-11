@@ -39,6 +39,7 @@
 		    frOnload=function(e){
 		    	var msg = {'blob': e.target.result,'chunk': ++currentChunk,'chunks': chunks};
 		        worker.postMessage(msg);
+		        msg = null;
 		        if (currentChunk < chunks) loadNext();
 		    }
 
