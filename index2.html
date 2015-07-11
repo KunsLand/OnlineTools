@@ -43,68 +43,36 @@
 	        result+="<tr><th>SHA3-384:</th><td id='sha3-384'>Reading data ... <td></tr>";
 	        result+="<tr><th>SHA3-512:</th><td id='sha3-512'>Reading data ... <td></tr>";
 	        document.getElementById('result').innerHTML=result;
-	        workers = [];
   			worker = new Worker('md5-worker.js');
   			worker.addEventListener('message',handle_worker_event('md5'));
-  			workers.push(worker);
+  			worker.postMessage(file);
   			worker = new Worker('sha1-worker.js');
   			worker.addEventListener('message',handle_worker_event('sha1'));
-  			workers.push(worker);
+  			worker.postMessage(file);
   			worker = new Worker('sha2-224-worker.js');
   			worker.addEventListener('message',handle_worker_event('sha2-224'));
-  			workers.push(worker);
+  			worker.postMessage(file);
   			worker = new Worker('sha2-256-worker.js');
   			worker.addEventListener('message',handle_worker_event('sha2-256'));
-  			workers.push(worker);
+  			worker.postMessage(file);
   			worker = new Worker('sha2-384-worker.js');
   			worker.addEventListener('message',handle_worker_event('sha2-384'));
-  			workers.push(worker);
+  			worker.postMessage(file);
   			worker = new Worker('sha2-512-worker.js');
   			worker.addEventListener('message',handle_worker_event('sha2-512'));
-  			workers.push(worker);
+  			worker.postMessage(file);
   			worker = new Worker('sha3-224-worker.js');
   			worker.addEventListener('message',handle_worker_event('sha3-224'));
-  			workers.push(worker);
+  			worker.postMessage(file);
   			worker = new Worker('sha3-256-worker.js');
   			worker.addEventListener('message',handle_worker_event('sha3-256'));
-  			workers.push(worker);
+  			worker.postMessage(file);
   			worker = new Worker('sha3-384-worker.js');
   			worker.addEventListener('message',handle_worker_event('sha3-384'));
-  			workers.push(worker);
+  			worker.postMessage(file);
   			worker = new Worker('sha3-512-worker.js');
   			worker.addEventListener('message',handle_worker_event('sha3-512'));
-  			workers.push(worker);
-  			for(var i=0;i<workers.length;i++){
-  				hash_file(file,workers[i]);
-  			}
-		}
-
-		function hash_file(file, worker){
-			var fileReader, start, end, chunk, chunks, chunkSize, currentChunk;
-		    handle_hash_blob=function(e){
-	    		if(end!==file.size){
-					fileReader = new FileReader();
-					fileReader.onload = handle_load_blob;
-					start = currentChunk * chunkSize;
-					end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
-					fileReader.readAsArrayBuffer(file.slice(start, end));
-				}
-			}
-		    handle_load_blob=function(e){
-		        worker.postMessage({'blob': e.target.result,'chunk': ++currentChunk,'chunks': chunks});
-		    }
-		    currentChunk = 0;
-		    chunkSize = 2097152; // read in chunks of 2MB
-		    chunks = Math.ceil(file.size / chunkSize);
-
-			start = currentChunk * chunkSize;
-			end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
-			threads = 0;
-		    worker.addEventListener('message', handle_hash_blob);
-
-			fileReader = new FileReader();
-			fileReader.onload = handle_load_blob;
-			fileReader.readAsArrayBuffer(file.slice(start, end));
+  			worker.postMessage(file);
 		}
 
 		function handle_worker_event(id){
