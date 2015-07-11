@@ -43,6 +43,7 @@
 	        result+="<tr><th>SHA3-384:</th><td id='sha3-384'>Reading data ... <td></tr>";
 	        result+="<tr><th>SHA3-512:</th><td id='sha3-512'>Reading data ... <td></tr>";
 	        document.getElementById('result').innerHTML=result;
+	        workers = [];
   			worker = new Worker('md5-worker.js');
   			worker.addEventListener('message',handle_worker_event('md5'));
   			workers.push(worker);
