@@ -12,8 +12,8 @@ self.md5 = CryptoJS.algo.MD5.create();
 
 self.addEventListener('message', function(evt){
 	var wordArr = CryptoJS.lib.WordArray.create(evt.data.blob);
-	self.md5.update();
-	out = {'chunk':evt.data.chunk}
+	self.md5.update(wordArr);
+	out = {'chunk':evt.data.chunk};
 	if(evt.data.chunk==evt.data.chunks){
 		out.result = self.md5.finalize().toString();
 	}
