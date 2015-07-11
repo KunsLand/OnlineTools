@@ -23,14 +23,16 @@
 	</div>
 	<script type="text/javascript">
 		function readFileInfo(evt){
+			var file, chunk, chunks, chunkSize, currentChunk, worker;
+		    document.getElementById('result').innerHTML='Reading data ... ';
   			evt.stopPropagation();
   			evt.preventDefault();
 			File.prototype.slice = File.prototype.webkitSlice || File.prototype.mozSlice || File.prototype.slice;
-		    var file = event.dataTransfer ? event.dataTransfer.files[0] : event.target.files[0];
-		    var chunkSize = 1048576, // read in chunks of 1MB
-		    	chunks = Math.ceil(file.size / chunkSize),
-		    	currentChunk = 0;
-		    var worker = new Worker('worker.js');
+		    file = event.dataTransfer ? event.dataTransfer.files[0] : event.target.files[0];
+		    chunkSize = 2097152; // read in chunks of 2MB
+		    chunks = Math.ceil(file.size / chunkSize);
+		    currentChunk = 0;
+		    worker = new Worker('worker.js');
 		    worker.addEventListener('message',function(e){
 		    	if(e.data.result){
 		    		document.getElementById('result').innerHTML=e.data.result;
@@ -39,8 +41,9 @@
 		    	}
 		    });
 		    frOnload=function(e){
-		    	var blob = e.target.result;
-		    	var msg = {'blob': blob,'chunk': ++currentChunk,'chunks': chunks};
+		    	var blob, msg;
+		    	blob = e.target.result;
+		    	msg = {'blob': blob,'chunk': ++currentChunk,'chunks': chunks};
 		        worker.postMessage(msg);
 		        e = null;
 		        blob = null;
@@ -49,10 +52,11 @@
 		    }
 
 			function loadNext() {
-				var fileReader = new FileReader();
+				var fileReader, start, end;
+				fileReader = new FileReader();
 				fileReader.onload = frOnload;
-				var start = currentChunk * chunkSize,
-					end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
+				start = currentChunk * chunkSize,];
+				end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
 				fileReader.readAsArrayBuffer(file.slice(start, end));
 			};
 			loadNext();
