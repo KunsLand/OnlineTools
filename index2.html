@@ -23,44 +23,63 @@
 	</div>
 	<script type="text/javascript">
 		function readFileInfo(evt){
-			var file, chunk, chunks, chunkSize, currentChunk, worker;
-		    document.getElementById('result').innerHTML='Reading data ... ';
+			var file, workers, worker;
   			evt.stopPropagation();
   			evt.preventDefault();
+		    document.getElementById('result').innerHTML='Reading data ... ';
 			File.prototype.slice = File.prototype.webkitSlice || File.prototype.mozSlice || File.prototype.slice;
+  			workers = [];
+  			worker = new Worker('worker.js');
+  			worker.addEventListener('message',handle_worker_event('result'));
+		    workers.push(worker);
 		    file = event.dataTransfer ? event.dataTransfer.files[0] : event.target.files[0];
+		    hash_file(file, workers);
+		}
+
+		hash_file(file, workers){
+			var fileReader, start, end, chunk, chunks, chunkSize, currentChunk, threads, i;
+		    handle_hash_blob=function(e){
+		    		threads -= 1;
+		    		if(threads===0 && end!==file.size){
+						fileReader = new FileReader();
+						fileReader.onload = handle_load_blob;
+						start = currentChunk * chunkSize;
+						end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
+						fileReader.readAsArrayBuffer(file.slice(start, end));
+					}
+			    };
+		    handle_load_blob=function(e){
+		    	for(i = 0; i < workers.length;i++){
+		    		threads += 1;
+		        	workers[i].postMessage({'blob': e.target.result,'chunk': ++currentChunk,'chunks': chunks});
+		    	}
+		    }
+
+			start = currentChunk * chunkSize;
+			end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
+			threads = 0;
+		    for(i = 0; i < workers.length;i++){
+		    	workers[i].addEventListener('message', handle_hash_blob);
+		    }
+
 		    chunkSize = 2097152; // read in chunks of 2MB
 		    chunks = Math.ceil(file.size / chunkSize);
 		    currentChunk = 0;
-		    worker = new Worker('worker.js');
-		    worker.addEventListener('message',function(e){
-		    	if(e.data.result){
-		    		document.getElementById('result').innerHTML=e.data.result;
-		    	}else{
-		    		document.getElementById('result').innerHTML=e.data.chunk +'/' +chunks;
-		    	}
-		    });
-		    frOnload=function(e){
-		    	var blob, msg;
-		    	blob = e.target.result;
-		    	msg = {'blob': blob,'chunk': ++currentChunk,'chunks': chunks};
-		        worker.postMessage(msg);
-		        e = null;
-		        blob = null;
-		        msg = null;
-		        if (currentChunk < chunks) loadNext();
-		    }
-
-			function loadNext() {
-				var fileReader, start, end;
-				fileReader = new FileReader();
-				fileReader.onload = frOnload;
-				start = currentChunk * chunkSize;
-				end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
-				fileReader.readAsArrayBuffer(file.slice(start, end));
-			};
-			loadNext();
+			fileReader = new FileReader();
+			fileReader.onload = handle_load_blob;
+			fileReader.readAsArrayBuffer(file.slice(start, end));
 		}
+
+		handle_worker_event(id){
+			return function(e){
+		    	if(e.data.result){
+		    		document.getElementById(id).innerHTML=e.data.result;
+		    	}else{
+		    		document.getElementById(id).innerHTML=e.data.chunk +'/' +chunks;
+		    	}
+			}
+		}
+
 		document.getElementById('localFile').addEventListener('change',readFileInfo);
 	</script>
 </body>
