@@ -8,8 +8,6 @@ importScripts('sha384.js');
 importScripts('sha512.js');
 importScripts('sha3.js');
 
-var
-
 self.addEventListener('message', function(evt){
 	self.postMessage(evt.data.chunk);
 }, false);
