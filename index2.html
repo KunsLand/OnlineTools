@@ -45,38 +45,41 @@
 	        document.getElementById('result').innerHTML=result;
   			worker = new Worker('md5-worker.js');
   			worker.addEventListener('message',handle_worker_event('md5'));
-		    hash_file(file, worker);
+  			workers.push(worker);
   			worker = new Worker('sha1-worker.js');
   			worker.addEventListener('message',handle_worker_event('sha1'));
-		    hash_file(file, worker);
+  			workers.push(worker);
   			worker = new Worker('sha2-224-worker.js');
   			worker.addEventListener('message',handle_worker_event('sha2-224'));
-		    hash_file(file, worker);
+  			workers.push(worker);
   			worker = new Worker('sha2-256-worker.js');
   			worker.addEventListener('message',handle_worker_event('sha2-256'));
-		    hash_file(file, worker);
+  			workers.push(worker);
   			worker = new Worker('sha2-384-worker.js');
   			worker.addEventListener('message',handle_worker_event('sha2-384'));
-		    hash_file(file, worker);
+  			workers.push(worker);
   			worker = new Worker('sha2-512-worker.js');
   			worker.addEventListener('message',handle_worker_event('sha2-512'));
-		    hash_file(file, worker);
+  			workers.push(worker);
   			worker = new Worker('sha3-224-worker.js');
   			worker.addEventListener('message',handle_worker_event('sha3-224'));
-		    hash_file(file, worker);
+  			workers.push(worker);
   			worker = new Worker('sha3-256-worker.js');
   			worker.addEventListener('message',handle_worker_event('sha3-256'));
-		    hash_file(file, worker);
+  			workers.push(worker);
   			worker = new Worker('sha3-384-worker.js');
   			worker.addEventListener('message',handle_worker_event('sha3-384'));
-		    hash_file(file, worker);
+  			workers.push(worker);
   			worker = new Worker('sha3-512-worker.js');
   			worker.addEventListener('message',handle_worker_event('sha3-512'));
-		    hash_file(file, worker);
+  			workers.push(worker);
+  			for(var i=0;i<workers.length;i++){
+  				hash_file(file,workers[i]);
+  			}
 		}
 
 		function hash_file(file, worker){
-			var fileReader, start, end, chunk, chunks, chunkSize, currentChunk, threads, i;
+			var fileReader, start, end, chunk, chunks, chunkSize, currentChunk;
 		    handle_hash_blob=function(e){
 	    		if(end!==file.size){
 					fileReader = new FileReader();
