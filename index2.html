@@ -55,7 +55,10 @@
 		        	workers[i].postMessage({'blob': e.target.result,'chunk': currentChunk,'chunks': chunks});
 		    	}
 		    }
-
+		    currentChunk = 0;
+		    chunkSize = 2097152; // read in chunks of 2MB
+		    chunks = Math.ceil(file.size / chunkSize);
+		    
 			start = currentChunk * chunkSize;
 			end = ((start + chunkSize) >= file.size) ? file.size : start + chunkSize;
 			threads = 0;
@@ -63,9 +66,6 @@
 		    	workers[i].addEventListener('message', handle_hash_blob);
 		    }
 
-		    chunkSize = 2097152; // read in chunks of 2MB
-		    chunks = Math.ceil(file.size / chunkSize);
-		    currentChunk = 0;
 			fileReader = new FileReader();
 			fileReader.onload = handle_load_blob;
 			fileReader.readAsArrayBuffer(file.slice(start, end));
