@@ -31,7 +31,6 @@
 		    var worker = new Worker('worker.js');
 		    worker.addEventListener('message',function(e){
 		    	if(e.data.result){
-		    		console.log(e.data);
 		    		document.getElementById('result').innerHTML=e.data.result;
 		    	}else{
 		    		document.getElementById('result').innerHTML=e.data.chunk +'/' +chunks;
