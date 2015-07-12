@@ -59,7 +59,7 @@ function hashFile(file, worker){
 			worker.postMessage({'result':worker.algo.finalize().toString()});
 		} else {
 			worker.postMessage({'progress': (end/file.size*100).toFixed(2)});
-			fileReader = new FileReader();
+			fileReader = new FileReaderSync();
 			fileReader.onload = handle_load_blob;
 			start += chunkSize;
 			end = start + chunkSize;
@@ -73,7 +73,7 @@ function hashFile(file, worker){
 	end = start + chunkSize;
 	end = end>file.size? file.size: end;
 
-	fileReader = new FileReader();
+	fileReader = new FileReaderSync();
 	fileReader.onload = handle_load_blob;
 	fileReader.readAsArrayBuffer(file.slice(start, end));
 }
