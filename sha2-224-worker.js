@@ -5,9 +5,9 @@ importScripts('sha224.js');
 self.algo = CryptoJS.algo.SHA224.create();
 
 self.addEventListener('message', function(evt){
-	var file, fileReader, start, end, chunk, chunks, chunkSize, currentChunk;
+	var file, fileReader, start, end, chunk, chunks, chunkSize, currentChunk, wordArr, out;
     handle_load_blob=function(e){
-		var wordArr = CryptoJS.lib.WordArray.create(e.target.result);
+		wordArr = CryptoJS.lib.WordArray.create(e.target.result);
 		self.algo.update(wordArr);
 		out = {'chunk':++currentChunk, 'chunks':chunks};
 		if(currentChunk==chunks){
