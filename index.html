@@ -127,7 +127,17 @@
 		}
 
 		document.getElementById('localFile').addEventListener('change',readFileInfo);
-		document.getElementById('apply-algo').onclick(function(){document.getElementById('localFile').fire('change');});
+		document.getElementById('apply-algo').addEventListener('click',function(){
+		    if (document.createEventObject){
+			    var evt = document.createEventObject();
+			    document.getElementById('localFile').fireEvent('onchange',evt);
+		    }
+		    else{
+			    var evt = document.createEvent("HTMLEvents");
+			    evt.initEvent('change', true, true );
+			    document.getElementById('localFile').dispatchEvent(evt);
+		    }
+		});
 	</script>
 </body>
 </html>
