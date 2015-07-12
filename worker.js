@@ -52,10 +52,12 @@ self.addEventListener('message', function(evt){
 }, false);
 
 function hashFile(file, worker){
-	var fileReader, start, end, chunkSize, wordArr;
+	var fileReader, start, end, chunkSize;
     handle_load_blob=function(e){
+		var wordArr = CryptoJS.lib.WordArray.create();
     	wordArr.init(e.target.result);
 		worker.algo.update(wordArr);
+		wordArr = null;
 		if(end===file.size){
 			worker.postMessage({'result':worker.algo.finalize().toString()});
 		} else {
@@ -74,7 +76,6 @@ function hashFile(file, worker){
 	end = start + chunkSize;
 	end = end>file.size? file.size: end;
 
-	wordArr = CryptoJS.lib.WordArray.create();
 	fileReader = new FileReader();
 	fileReader.onload = handle_load_blob;
 	fileReader.readAsArrayBuffer(file.slice(start, end));
