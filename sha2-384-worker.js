@@ -14,6 +14,9 @@ self.addEventListener('message', function(evt){
 			out.result = self.algo.finalize().toString();
 		}
 		self.postMessage(out);
+		wordArr = null;
+		out = null;
+		e = null;
 
 		if(end!==file.size){
 			fileReader = new FileReader();
