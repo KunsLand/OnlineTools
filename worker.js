@@ -52,27 +52,20 @@ self.addEventListener('message', function(evt){
 }, false);
 
 function hashFile(file, worker){
-	var fileReader, start, end, chunkSize;
+	var chunkSize = 2097152, start = 0, end;
     handle_load_blob=function(e){
-		var wordArr = CryptoJS.lib.WordArray.create();
-    	wordArr.init(e.target.result);
-		worker.algo.update(wordArr);
-		wordArr = null;
+		worker.algo.update(CryptoJS.lib.WordArray.create(e.target.result));
 		if(end===file.size){
 			worker.postMessage({'result':worker.algo.finalize().toString()});
 		} else {
 			worker.postMessage({'progress': (end/file.size*100).toFixed(2)});
-			fileReader = new FileReader();
-			fileReader.onload = handle_load_blob;
 			start += chunkSize;
 			end = start + chunkSize;
 			end = end>file.size? file.size: end;
 			fileReader.readAsArrayBuffer(file.slice(start, end));
 		}
     }
-    chunkSize = 2097152; // read in chunks of 2MB
 
-	start = 0;
 	end = start + chunkSize;
 	end = end>file.size? file.size: end;
 
