@@ -52,7 +52,7 @@ self.addEventListener('message', function(evt){
 }, false);
 
 function hashFile(file, worker){
-	var chunkSize = 2097152, start = 0, end;
+	var chunkSize = 2097152, start = 0, end, fileReader;
     handle_load_blob=function(e){
 		worker.algo.update(CryptoJS.lib.WordArray.create(e.target.result));
 		if(end===file.size){
