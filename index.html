@@ -53,61 +53,61 @@
 		    var result="<tr><th>Name:</th><td>"+file.name+"</td></tr>";
 	        result+="<tr><th>Size:</th><td>"+file.size+"B</td></tr>";
 	        result+="<tr><th>Type:</th><td>"+(file.type||'N/A')+"</td></tr>";
-	        if($('#md5-check').prop('checked')){
+	        if(document.getElementById('md5-check').checked){
 	        	result+="<tr><th>MD5:</th><td id='md5'>Reading data ... <td></tr>";
 	  			worker = new Worker('md5-worker.js');
 	  			worker.addEventListener('message',handle_worker_event('md5'));
 	  			worker.postMessage(file);
 	    	}
-	    	if($('#sha1-check').prop('checked')){
+	    	if(document.getElementById('sha1-check').checked){
 	    		result+="<tr><th>SHA-1:</th><td id='sha1'>Reading data ... <td></tr>";
 	  			worker = new Worker('sha1-worker.js');
 	  			worker.addEventListener('message',handle_worker_event('sha1'));
 	  			worker.postMessage(file);
 	    	}
-	    	if($('#sha2-224-check').prop('checked')){
+	    	if(document.getElementById('sha2-224-check').checked){
 	    		result+="<tr><th>SHA2-224:</th><td id='sha2-224'>Reading data ... <td></tr>";
 	  			worker = new Worker('sha2-224-worker.js');
 	  			worker.addEventListener('message',handle_worker_event('sha2-224'));
 	  			worker.postMessage(file);
 	    	}
-	        if($('#sha2-256-check').prop('checked')){
+	        if(document.getElementById('sha2-256-check').checked){
 	        	result+="<tr><th>SHA2-256:</th><td id='sha2-256'>Reading data ... <td></tr>";
 	  			worker = new Worker('sha2-256-worker.js');
 	  			worker.addEventListener('message',handle_worker_event('sha2-256'));
 	  			worker.postMessage(file);
 	        }
-	        if($('#sha2-384-check').prop('checked')){
+	        if(document.getElementById('sha2-384-check').checked){
 	        	result+="<tr><th>SHA2-384:</th><td id='sha2-384'>Reading data ... <td></tr>";
 	  			worker = new Worker('sha2-384-worker.js');
 	  			worker.addEventListener('message',handle_worker_event('sha2-384'));
 	  			worker.postMessage(file);
 	        }
-	        if($('#sha2-512-check').prop('checked')){
+	        if(document.getElementById('sha2-512-check').checked){
 	        	result+="<tr><th>SHA2-512:</th><td id='sha2-512'>Reading data ... <td></tr>";
 	  			worker = new Worker('sha2-512-worker.js');
 	  			worker.addEventListener('message',handle_worker_event('sha2-512'));
 	  			worker.postMessage(file);
 	        }
-	        if($('#sha3-224-check').prop('checked'))
+	        if(document.getElementById('sha3-224-check').checked)
 	        	{result+="<tr><th>SHA3-224:</th><td id='sha3-224'>Reading data ... <td></tr>";
 	  			worker = new Worker('sha3-224-worker.js');
 	  			worker.addEventListener('message',handle_worker_event('sha3-224'));
 	  			worker.postMessage(file);
-	    }
-	        if($('#sha3-256-check').prop('checked')){
+	    	}
+	        if(document.getElementById('sha3-256-check').checked){
 	        	result+="<tr><th>SHA3-256:</th><td id='sha3-256'>Reading data ... <td></tr>";
 	  			worker = new Worker('sha3-256-worker.js');
 	  			worker.addEventListener('message',handle_worker_event('sha3-256'));
 	  			worker.postMessage(file);
 	        }
-	        if($('#sha3-384-check').prop('checked')){
+	        if(document.getElementById('sha3-384-check').checked){
 	        	result+="<tr><th>SHA3-384:</th><td id='sha3-384'>Reading data ... <td></tr>";
 	  			worker = new Worker('sha3-384-worker.js');
 	  			worker.addEventListener('message',handle_worker_event('sha3-384'));
 	  			worker.postMessage(file);
 	        }
-	        if($('#sha3-512-check').prop('checked')){
+	        if(document.getElementById('sha3-512-check').checked){
 	        	result+="<tr><th>SHA3-512:</th><td id='sha3-512'>Reading data ... <td></tr>";
 	  			worker = new Worker('sha3-512-worker.js');
 	  			worker.addEventListener('message',handle_worker_event('sha3-512'));
@@ -127,7 +127,7 @@
 		}
 
 		document.getElementById('localFile').addEventListener('change',readFileInfo);
-		$('#apply-algo').click(function(){$('#localFile').change();});
+		document.getElementById('apply-algo').onclick(function(){document.getElementById('localFile').fire('change');});
 	</script>
 </body>
 </html>
