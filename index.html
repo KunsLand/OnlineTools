@@ -54,7 +54,7 @@
 		    }
 		    document.getElementById('result').innerHTML='Reading data ... ';
 		    var result="<tr><th>Name:</th><td>"+file.name+"</td></tr>";
-	        result+="<tr><th>Size:</th><td>"+file.size+"B</td></tr>";
+	        result+="<tr><th>Size:</th><td>"+file.size+"B | "+(file.size/1024)+"K | "+(file.size/1024/1024)+"M | "+(file.size/1024/1024/1024)+"G</td></tr>";
 	        result+="<tr><th>Type:</th><td>"+(file.type||'N/A')+"</td></tr>";
 	        if(document.getElementById('md5-check').checked){
 	        	result+="<tr><th>MD5:</th><td id='md5'>Reading data ... <td></tr>";
